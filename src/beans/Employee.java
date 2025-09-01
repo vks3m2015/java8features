@@ -128,10 +128,20 @@ public class Employee {
 				new Employee(333, "vks3", "Accen") );
 	}
 
-
 	@Override
+	public String toString() {
+		return "Employee{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", company='" + company + '\'' +
+				", salary=" + salary +
+				", city='" + city + '\'' +
+				", state='" + state + '\'' +
+				'}';
+	}
+/*@Override
 	public String toString() {
 		return "Employee [id=" + id + ", name=" + name + ", company=" + company + "]";
 	}     
-
+*/
 }

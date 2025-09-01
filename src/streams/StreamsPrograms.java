@@ -6,13 +6,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,14 +25,38 @@ public class StreamsPrograms {
 		//list1 = {1,2,3,4,5}  
 		//list2 = {3,4,5,6,7}
 	    //Find out the common elements from the two lists (O/P - 3,4,5)
+
+		Integer[] arr1 = {1,2,3,4,5};
+		Integer[] arr2 = {3,4,5,6,7};
+
+		//ineffective way
+		Set<Integer> set = Stream.of(arr1)
+				.filter(a1 -> Arrays.stream(arr2).anyMatch(a2 -> a1.equals(a2)))
+				.collect(Collectors.toSet());
+		System.out.println("common elements" + set);
+
 	}
 	
 	static void occuranceOfChars() {
-		String str = "iamahumanbeing";
-		//Note -> conversion string to stream
-		Map<Character, Long> map = str.chars().mapToObj(ch -> (char) ch)
+		String str = "I am a human being";
+		str = "Programming";
+		//String[] spStr = str.split("");
+		//System.out.println(Arrays.toString(spStr));
+		//Arrays.stream(spStr);
+
+		Map<Character, Long> countMap = str.chars()
+				.mapToObj(ch -> (char) ch)
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-	    System.out.println(" map = "+ map); 
+	    System.out.println(" map = "+ countMap);
+	}
+
+	static void occuranceOfElements(){
+		List<Integer> list = Arrays.asList(1, 3,5,1,4,3);
+		Map<Integer, Long> countMap = list.stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+		System.out.println(countMap);
+		//Output -> 1=2, 3=2, 4=1, 5=1}
 	}
 	 
 	
@@ -136,7 +158,7 @@ public class StreamsPrograms {
 				new Employee(333, "P", 3500, "Pune", "MH"),
 				new Employee(123, "D", 3700, "Mumbai", "MH"),
 				new Employee(123, "Z", 3700, "Mumbai", "MH"));
-		
+
 		//multiple employees having same salary (this will not work in that case)
 		String name = empList.stream()
 				.sorted(Comparator.comparing((Employee emp) -> emp.getSalary()).reversed())
@@ -150,11 +172,19 @@ public class StreamsPrograms {
 		System.out.println(" 2nd Highest Salary Employee name = "+name); //Z
 		
 		
-		List<String> em = empList.stream().collect(Collectors.groupingBy(e -> e.getSalary()))
-		    .entrySet().stream().sorted(Map.Entry.<Double, List<Employee>>comparingByKey().reversed())
-		    .skip(1).findFirst().map(entry -> entry.getValue()).get().stream().map(emp -> emp.getName()).collect(Collectors.toList());
+		List<String> employeNames = empList.stream()
+				.collect(Collectors.groupingBy(e -> e.getSalary()))
+				.entrySet().stream()
+				.sorted(Map.Entry.<Double, List<Employee>>comparingByKey().reversed())
+				.skip(1)
+				.findFirst()
+				.map(entry -> entry.getValue())
+				.get()
+				.stream()
+				.map(emp -> emp.getName())
+				.collect(Collectors.toList());
 		    
-		System.out.println(" 2nd Highest Salary Employee name.... = "+em);  //C,P
+		System.out.println(" 2nd Highest Salary Employee name.... = "+employeNames);  //C,P
 		
 	}
 	
@@ -198,14 +228,27 @@ public class StreamsPrograms {
 		
 		
 	}
+
+	static void prog_removeDuplicates(){
+	   List<String> list = Arrays.asList("Java", "C", "Python", "C", "Java", "Go");
+
+	   List<String> distinctList = list.stream()
+			   .distinct()
+			   .collect(Collectors.toList());
+
+	   System.out.println(distinctList);
+	   //Output -> [Java, C, Python, Go]
+	}
 	 
 	//find max/min
 	static void prog6() {
 		List<Integer> list = Arrays.asList(2,10,2,5,15,10,2);
 		
 		int max = list.stream().max(Comparator.comparing(Integer :: valueOf)).get();
+		// int max = list.stream().max(Integer::compareTo).get();
 		
 		int min = list.stream().min(Comparator.comparing(Integer :: valueOf)).get();
+		//int min = list.stream().min(Integer::compareTo).get();
 		
 		System.out.println("max = "+ max + " min = "+ min);
 	}
@@ -214,7 +257,7 @@ public class StreamsPrograms {
     static void prog7() {
     	List<Integer> list = Arrays.asList(2,10,2,5,15,10,2);
     		
-    	List<Integer> sortAsc = list.stream().sorted().collect(Collectors.toList());
+    	List<Integer> sortAsc = list.stream().sorted().toList();
     	
     	System.out.println("sortAsc = "+sortAsc);
     	
@@ -244,24 +287,58 @@ public class StreamsPrograms {
     	
     	
     	List<Integer> list = Arrays.asList(2,10,2,5,15,10,2);
+
+    	int secLargest = list.stream()
+				.distinct()
+				//.sorted(Collections.reverseOrder())
+				.sorted((a,b) -> b.compareTo(a))
+				.skip(1)
+				.findFirst()
+				.get();
     	
-    	//list = List.of(1,2,3);
-    	
-    	int secH = list.stream().sorted(Collections.reverseOrder()).distinct().skip(1).findFirst().get();
-    	
-    	System.out.println(" Second highest num = "+ secH);
+    	System.out.println(" Second highest num = "+ secLargest);
    
-    	int secL = list.stream().sorted().distinct().skip(1).findFirst().get();
+    	int secL = list.stream()
+				.sorted()
+				.distinct()
+				.skip(1)
+				.findFirst()
+				.get();
     	
     	System.out.println(" Second lowest num = "+ secL);
     	
     	
     }
+
+	static void maxNElements(){
+		List<Integer> list = Arrays.asList(2,10,2,5,15,10,2);
+
+		List<Integer> max3 = list.stream()
+				.distinct()
+				.sorted(Comparator.reverseOrder())
+				.limit(3)
+				.collect(Collectors.toList());
+
+		System.out.println(max3);
+		//Output -> [15, 10, 5]
+	}
+
+	static void minNElements(){
+		List<Integer> list = Arrays.asList(2,10,2,5,15,10,2);
+
+		List<Integer> min3 = list.stream()
+				.distinct()
+				.sorted()
+				.limit(3)
+				.collect(Collectors.toList());
+
+		System.out.println(min3);
+		//Output -> [2, 5, 10]
+	}
     
     //Multiply elements of a list
     static void prog10() {
     	List<Integer> list = Arrays.asList(2,10,2,5);
-    	
     	int res = list.stream().reduce((a,b) -> a*b).get();
     	System.out.println(res);
     }
@@ -349,14 +426,20 @@ public class StreamsPrograms {
         // prog6();
         // prog7();
          //prog8();
-        // prog9();
+         prog9();
          //prog10();
-		findSecondHighestSalaryEmployeeName();
+		//findSecondHighestSalaryEmployeeName();
 		//firstSortSalaryThenName();
 		//sortMapByValue();
 		//studentsHavingMaxMarksPerSection();
 		//topkOccurigWords();
 		//occuranceOfChars();
+		//occuranceOfElements();
+		//prog_removeDuplicates();
+		//maxNElements();
+		//minNElements();
+		//commonElements();
+
 
 	}
 

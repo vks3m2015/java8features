@@ -10,8 +10,8 @@ public class OptionalUtil {
 		 String city = getCountryAfterJava8();
 		 System.out.println(city);
 		 
-		 List l = List.of(1,2,3,4);
-		 l.add(5);
+		// List l = List.of(1,2,3,4);
+		// l.add(5);
 
 	}
 	

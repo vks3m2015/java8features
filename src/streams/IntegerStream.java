@@ -12,7 +12,8 @@ import java.util.stream.IntStream;
 public class IntegerStream {
 
 	public static int findSumUsingStream(int[] array) {
-	    return Arrays.stream(array).sum();
+	    return Arrays.stream(array)
+				.sum();
 	}
 	
 	public static int findSumUsingStream(Integer[] array) {
